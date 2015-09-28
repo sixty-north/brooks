@@ -7,6 +7,7 @@ def initial():
         step_duration_seconds=seconds_per_day,
         num_function_points_requirements=500,
         num_function_points_developed=0,
+        num_new_personnel=0,
         num_experienced_personnel=20,
         nominal_productivity=0.1 / seconds_per_day
     )

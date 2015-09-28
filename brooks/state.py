@@ -6,11 +6,13 @@ class State:
             step_duration_seconds,
             num_function_points_requirements,
             num_function_points_developed,
+            num_new_personnel,
             num_experienced_personnel,
             nominal_productivity):
         self.step_duration_seconds = step_duration_seconds
         self.num_function_points_requirements = num_function_points_requirements
         self.num_function_points_developed = num_function_points_developed
+        self.num_new_personnel = num_new_personnel
         self.num_experienced_personnel = num_experienced_personnel
         self.nominal_productivity = nominal_productivity
         pass
@@ -46,13 +48,23 @@ class State:
         self._num_function_points_developed = value
 
     @property
+    def num_new_personnel(self):
+        return self._num_new_personnel
+
+    @num_new_personnel.setter
+    def num_new_personnel(self, value):
+        if value < 0:
+            raise ValueError("Number of new personnel {0} cannot be negative".format(value))
+        self._num_new_personnel = value
+
+    @property
     def num_experienced_personnel(self):
         return self._num_experienced_personnel
 
     @num_experienced_personnel.setter
     def num_experienced_personnel(self, value):
         if value < 0:
-            raise ValueError("Number of personnel {0} cannot be negative".format(value))
+            raise ValueError("Number of experienced personnel {0} cannot be negative".format(value))
         self._num_experienced_personnel = value
 
     @property
@@ -71,6 +83,7 @@ class State:
             "step_duration_seconds={}, "             \
             "num_functions_points_requirements={}, " \
             "num_functions_points_developed={}, "    \
+            "num_new_personnel={}, "                 \
             "num_experienced_personnel={}, "         \
             "nominal_productivity={}"                \
             ")".format(
@@ -78,6 +91,7 @@ class State:
                 self._step_duration_seconds,
                 self._num_function_points_requirements,
                 self._num_function_points_developed,
+                self._num_new_personnel,
                 self._num_experienced_personnel,
                 self._nominal_productivity
             )
