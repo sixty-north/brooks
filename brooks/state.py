@@ -7,12 +7,12 @@ class State:
             num_function_points_requirements,
             num_function_points_developed,
             num_personnel,
-            development_rate_function_points_per_person_per_second):
+            nominal_productivity):
         self.step_duration_seconds = step_duration_seconds
         self.num_function_points_requirements = num_function_points_requirements
         self.num_function_points_developed = num_function_points_developed
         self.num_personnel = num_personnel
-        self.development_rate_function_points_per_person_per_second = development_rate_function_points_per_person_per_second
+        self.nominal_productivity = nominal_productivity
         pass
 
     @property
@@ -56,25 +56,28 @@ class State:
         self._num_personnel = value
 
     @property
-    def development_rate_function_points_per_person_per_second(self):
-        return self._development_rate_function_points_per_person_per_second
+    def nominal_productivity(self):
+        """Nominal productivity in function points per person per second."""
+        return self._nominal_productivity
 
-    @development_rate_function_points_per_person_per_second.setter
-    def development_rate_function_points_per_person_per_second(self, value):
+    @nominal_productivity.setter
+    def nominal_productivity(self, value):
         if value <= 0:
-            raise ValueError("Development rate {0} must be positive".format(value))
-        self._development_rate_function_points_per_person_per_second = value
+            raise ValueError("Nominal productivity {0} function-points/person/second must be positive".format(value))
+        self._nominal_productivity = value
 
     def __repr__(self):
         return "{}("                                 \
             "step_duration_seconds={}, "             \
             "num_functions_points_requirements={}, " \
             "num_functions_points_developed={}, "    \
-            "num_personnel={}"                       \
+            "num_personnel={}, "                     \
+            "nominal_productivity={}"                \
             ")".format(
                 self.__class__.__name__,
                 self._step_duration_seconds,
                 self._num_function_points_requirements,
                 self._num_function_points_developed,
-                self._num_personnel
+                self._num_personnel,
+                self._nominal_productivity
             )

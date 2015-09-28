@@ -8,7 +8,7 @@ def initial():
         num_function_points_requirements=500,
         num_function_points_developed=0,
         num_personnel=20,
-        development_rate_function_points_per_person_per_second=0.1 / seconds_per_day
+        nominal_productivity=0.1 / seconds_per_day
     )
 
 
