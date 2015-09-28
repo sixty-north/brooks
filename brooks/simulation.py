@@ -1,22 +1,5 @@
-class State:
-
-    def __init__(
-            self,
-            step_duration_seconds):
-
-        if step_duration_seconds <= 0:
-            raise ValueError("Step duration {!r} must be positive".format(step_duration_seconds))
-        self._step_duration_seconds = step_duration_seconds
-
-    @property
-    def step_duration_seconds(self):
-        return self._step_duration_seconds
-
-    def __repr__(self):
-        return "{}(state_duration_seconds={})".format(
-            self.__class__.__name__,
-            self._step_duration_seconds
-        )
+from brooks.state import State
+from brooks.util import cardinal
 
 
 def simulate(schedule):
@@ -25,24 +8,36 @@ def simulate(schedule):
     Args:
         schedule: An object with the following methods:
 
-             initial(state)
-             step(state, input)
-             complete(state)
-
-    TODO: Consider making this a generator function
-
+             initial()
+             intervene(step_number, elapsed_time_seconds, state)
+             is_complete(step_number, elapsed_time_seconds, state)
+             complete(step_number, elapsed_time_seconds, state)
     """
     args = schedule.initial()
     state = State(**args)
     step_number = 0
     elapsed_time_seconds = 0
     while True:
-        state = schedule.step(step_number, elapsed_time_seconds, state)
+        state = schedule.intervene(step_number, elapsed_time_seconds, state)
+        state = step(step_number, elapsed_time_seconds, state)
         if schedule.is_complete(step_number, elapsed_time_seconds, state):
             break
         step_number += 1
         elapsed_time_seconds += state.step_duration_seconds
-    state = schedule.complete(state)
-    print("number of steps: {}".format(step_number))
+    state = schedule.complete(step_number, elapsed_time_seconds, state)
+    print("number of steps: {}".format(cardinal(step_number)))
     print("elapsed time: {} s".format(elapsed_time_seconds))
     print(state)
+
+
+def step(step_number, elapsed_time_seconds, state):
+    """Advance the simulation one time step."""
+
+    # Determine the number of function points developed in this time-step
+    delta_function_points_developed = (
+        state.development_rate_function_points_per_person_per_second
+           * state.num_personnel * state.step_duration_seconds)
+
+    state.num_function_points_developed += delta_function_points_developed
+    return state
+
