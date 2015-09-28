@@ -34,6 +34,9 @@ def step(step_number, elapsed_time_seconds, state):
     # Determine the number of new persons allocated in this time-step
     state.num_new_personnel += state.personnel_allocation_rate * state.step_duration_days
 
+    # Determine the assimilation rate
+    state.personnel_assimilation_rate = state.num_new_personnel / state.assimilation_delay_days
+
     # Determine the number of persons assimilated from the new personnel group
     # into the experienced personnel group
     num_assimilated = min(state.personnel_assimilation_rate * state.step_duration_days,

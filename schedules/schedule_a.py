@@ -8,6 +8,7 @@ def initial():
         num_experienced_personnel=15,
         personnel_allocation_rate=0,
         personnel_assimilation_rate=0,
+        assimilation_delay_days=20,
         nominal_productivity=0.1,
         new_productivity_weight=0.8,
         experienced_productivity_weight=1.2

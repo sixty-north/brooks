@@ -10,6 +10,7 @@ class State:
             num_experienced_personnel,
             personnel_allocation_rate,
             personnel_assimilation_rate,
+            assimilation_delay_days,
             nominal_productivity,
             new_productivity_weight,
             experienced_productivity_weight):
@@ -20,6 +21,7 @@ class State:
         self.num_experienced_personnel = num_experienced_personnel
         self.personnel_allocation_rate = personnel_allocation_rate
         self.personnel_assimilation_rate = personnel_assimilation_rate
+        self.assimilation_delay_days = assimilation_delay_days
         self.nominal_productivity = nominal_productivity
         self.new_productivity_weight = new_productivity_weight
         self.experienced_productivity_weight = experienced_productivity_weight
@@ -94,6 +96,16 @@ class State:
         self._personnel_assimilation_rate = value
 
     @property
+    def assimilation_delay_days(self):
+        return self._assimilation_delay_days
+
+    @assimilation_delay_days.setter
+    def assimilation_delay_days(self, value):
+        if value <= 0:
+            raise ValueError("Personnel assimilation rate {0} must be positive")
+        self._assimilation_delay_days = value
+
+    @property
     def nominal_productivity(self):
         """Nominal productivity in function points per person per second."""
         return self._nominal_productivity
@@ -129,6 +141,9 @@ class State:
             "num_functions_points_developed={}, "    \
             "num_new_personnel={}, "                 \
             "num_experienced_personnel={}, "         \
+            "personnel_allocation_rate={}, "         \
+            "personnel_assimilation_rate={}, "       \
+            "assimilation_delay_days={}, "           \
             "nominal_productivity={}, "              \
             "new_productivity_weight={}, "           \
             "experienced_productivity_weight={}"     \
@@ -139,6 +154,9 @@ class State:
                 self._num_function_points_developed,
                 self._num_new_personnel,
                 self._num_experienced_personnel,
+                self._personnel_allocation_rate,
+                self._personnel_assimilation_rate,
+                self._assimilation_delay_days,
                 self._nominal_productivity,
                 self._new_productivity_weight,
                 self._experienced_productivity_weight
