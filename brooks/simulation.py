@@ -23,7 +23,7 @@ def simulate(schedule):
         if schedule.is_complete(step_number, elapsed_time_seconds, state):
             break
         step_number += 1
-        elapsed_time_seconds += state.step_duration_seconds
+        elapsed_time_seconds += state.step_duration_days
     state = schedule.complete(step_number, elapsed_time_seconds, state)
     print("number of steps: {}".format(cardinal(step_number)))
     print("elapsed time: {} s".format(elapsed_time_seconds))
@@ -36,7 +36,7 @@ def step(step_number, elapsed_time_seconds, state):
     # Determine the number of function points developed in this time-step
     delta_function_points_developed = (
         state.nominal_productivity
-           * state.num_experienced_personnel * state.step_duration_seconds)
+           * state.num_experienced_personnel * state.step_duration_days)
 
     state.num_function_points_developed += delta_function_points_developed
     return state

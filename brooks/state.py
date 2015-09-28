@@ -3,13 +3,13 @@ class State:
 
     def __init__(
             self,
-            step_duration_seconds,
+            step_duration_days,
             num_function_points_requirements,
             num_function_points_developed,
             num_new_personnel,
             num_experienced_personnel,
             nominal_productivity):
-        self.step_duration_seconds = step_duration_seconds
+        self.step_duration_days = step_duration_days
         self.num_function_points_requirements = num_function_points_requirements
         self.num_function_points_developed = num_function_points_developed
         self.num_new_personnel = num_new_personnel
@@ -18,14 +18,14 @@ class State:
         pass
 
     @property
-    def step_duration_seconds(self):
-        return self._step_duration_seconds
+    def step_duration_days(self):
+        return self._step_duration_days
 
-    @step_duration_seconds.setter
-    def step_duration_seconds(self, value):
+    @step_duration_days.setter
+    def step_duration_days(self, value):
         if value <= 0:
-            raise ValueError("Step duration {!r} must be positive".format(value))
-        self._step_duration_seconds = value
+            raise ValueError("Step duration {!r} days must be positive".format(value))
+        self._step_duration_days = value
 
     @property
     def num_function_points_requirements(self):
@@ -75,12 +75,12 @@ class State:
     @nominal_productivity.setter
     def nominal_productivity(self, value):
         if value <= 0:
-            raise ValueError("Nominal productivity {0} function-points/person/second must be positive".format(value))
+            raise ValueError("Nominal productivity {0} function-points/person/day must be positive".format(value))
         self._nominal_productivity = value
 
     def __repr__(self):
         return "{}("                                 \
-            "step_duration_seconds={}, "             \
+            "step_duration_days={}, "                \
             "num_functions_points_requirements={}, " \
             "num_functions_points_developed={}, "    \
             "num_new_personnel={}, "                 \
@@ -88,7 +88,7 @@ class State:
             "nominal_productivity={}"                \
             ")".format(
                 self.__class__.__name__,
-                self._step_duration_seconds,
+                self._step_duration_days,
                 self._num_function_points_requirements,
                 self._num_function_points_developed,
                 self._num_new_personnel,
