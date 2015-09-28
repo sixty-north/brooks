@@ -36,7 +36,7 @@ def step(step_number, elapsed_time_seconds, state):
     # Determine the number of function points developed in this time-step
     delta_function_points_developed = (
         state.nominal_productivity
-           * state.num_personnel * state.step_duration_seconds)
+           * state.num_experienced_personnel * state.step_duration_seconds)
 
     state.num_function_points_developed += delta_function_points_developed
     return state

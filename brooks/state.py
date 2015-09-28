@@ -6,12 +6,12 @@ class State:
             step_duration_seconds,
             num_function_points_requirements,
             num_function_points_developed,
-            num_personnel,
+            num_experienced_personnel,
             nominal_productivity):
         self.step_duration_seconds = step_duration_seconds
         self.num_function_points_requirements = num_function_points_requirements
         self.num_function_points_developed = num_function_points_developed
-        self.num_personnel = num_personnel
+        self.num_experienced_personnel = num_experienced_personnel
         self.nominal_productivity = nominal_productivity
         pass
 
@@ -46,14 +46,14 @@ class State:
         self._num_function_points_developed = value
 
     @property
-    def num_personnel(self):
-        return self._num_personnel
+    def num_experienced_personnel(self):
+        return self._num_experienced_personnel
 
-    @num_personnel.setter
-    def num_personnel(self, value):
+    @num_experienced_personnel.setter
+    def num_experienced_personnel(self, value):
         if value < 0:
             raise ValueError("Number of personnel {0} cannot be negative".format(value))
-        self._num_personnel = value
+        self._num_experienced_personnel = value
 
     @property
     def nominal_productivity(self):
@@ -71,13 +71,13 @@ class State:
             "step_duration_seconds={}, "             \
             "num_functions_points_requirements={}, " \
             "num_functions_points_developed={}, "    \
-            "num_personnel={}, "                     \
+            "num_experienced_personnel={}, "         \
             "nominal_productivity={}"                \
             ")".format(
                 self.__class__.__name__,
                 self._step_duration_seconds,
                 self._num_function_points_requirements,
                 self._num_function_points_developed,
-                self._num_personnel,
+                self._num_experienced_personnel,
                 self._nominal_productivity
             )
