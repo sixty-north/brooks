@@ -13,7 +13,8 @@ class State:
             assimilation_delay_days,
             nominal_productivity,
             new_productivity_weight,
-            experienced_productivity_weight):
+            experienced_productivity_weight,
+            training_overhead_proportion):
         self.step_duration_days = step_duration_days
         self.num_function_points_requirements = num_function_points_requirements
         self.num_function_points_developed = num_function_points_developed
@@ -25,6 +26,7 @@ class State:
         self.nominal_productivity = nominal_productivity
         self.new_productivity_weight = new_productivity_weight
         self.experienced_productivity_weight = experienced_productivity_weight
+        self.training_overhead_proportion = training_overhead_proportion
         pass
 
     @property
@@ -134,15 +136,25 @@ class State:
     def experienced_productivity_weight(self, value):
         self._experienced_productivity_weight = value
 
+    @property
+    def training_overhead_proportion(self):
+        return self._training_overhead_proportion
+
+    @training_overhead_proportion.setter
+    def training_overhead_proportion(self, value):
+        if value < 0:
+            raise ValueError("Training overhead proportion {0} cannot be negative.".format(value))
+        self._training_overhead_proportion = value
+
     def __repr__(self):
         return "{}("                                 \
             "step_duration_days={}, "                \
-            "num_functions_points_requirements={}, " \
-            "num_functions_points_developed={}, "    \
-            "num_new_personnel={}, "                 \
-            "num_experienced_personnel={}, "         \
-            "personnel_allocation_rate={}, "         \
-            "personnel_assimilation_rate={}, "       \
+            "num_functions_points_requirements={:.2f}, " \
+            "num_functions_points_developed={:.2f}, "    \
+            "num_new_personnel={:.2f}, "                 \
+            "num_experienced_personnel={:.2f}, "         \
+            "personnel_allocation_rate={:.2f}, "         \
+            "personnel_assimilation_rate={:.2f}, "       \
             "assimilation_delay_days={}, "           \
             "nominal_productivity={}, "              \
             "new_productivity_weight={}, "           \

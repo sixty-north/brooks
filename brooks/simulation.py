@@ -44,13 +44,16 @@ def step(step_number, elapsed_time_seconds, state):
     state.num_new_personnel -= num_assimilated
     state.num_experienced_personnel += num_assimilated
 
+    # Determine the number of experienced personnel needed for training
+    num_experienced_personnel_needed_for_training = state.training_overhead_proportion * state.num_new_personnel
+
     # Determine the number of function points developed in this time-step
     delta_function_points_developed = (
         state.nominal_productivity
         * (  state._new_productivity_weight * state.num_new_personnel
-           + state.experienced_productivity_weight * state.num_experienced_personnel)
+           + state.experienced_productivity_weight * (  state.num_experienced_personnel
+                                                      - num_experienced_personnel_needed_for_training))
         * state.step_duration_days)
 
     state.num_function_points_developed += delta_function_points_developed
     return state
-
