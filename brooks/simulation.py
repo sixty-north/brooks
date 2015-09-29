@@ -1,66 +1,69 @@
+from collections import OrderedDict
+from itertools import chain
+
 from brooks.state import State
 
 
-def simulate(schedule):
+def simulate(schedule, step, output_stream=None, attributes=tuple()):
     """
 
     Args:
         schedule: An object with the following methods:
 
              initial()
-             intervene(step_number, elapsed_time_seconds, state)
-             is_complete(step_number, elapsed_time_seconds, state)
-             complete(step_number, elapsed_time_seconds, state)
+             intervene(step_number, elapsed_time, state)
+             is_complete(step_number, elapsed_time, state)
+             complete(step_number, elapsed_time, state)
+
+        step: A function used to update the model state with each
+            step. It must have the signature:
+
+                step(step_number, elapsed_time, state)
+
+        output_stream: A file-like object to which results will be streamed.
+
+        attributes: An iterable series of attribute names to be recorded in the output stream.
+
     """
     args = schedule.initial()
     state = State(**args)
     step_number = 0
-    elapsed_time_seconds = 0
-    while not schedule.is_complete(step_number, elapsed_time_seconds, state):
-        print(state)
-        state = schedule.intervene(step_number, elapsed_time_seconds, state)
-        state = step(step_number, elapsed_time_seconds, state)
+    elapsed_time = 0
+    write_tsv_header(output_stream, attributes)
+    while not schedule.is_complete(step_number, elapsed_time, state):
+        #print(state)
+        write_tsv_record(output_stream, step_number, elapsed_time, state, attributes)
+        state = schedule.intervene(step_number, elapsed_time, state)
+        state = step(step_number, elapsed_time, state)
         step_number += 1
-        elapsed_time_seconds += state.step_duration_days
-    state = schedule.complete(step_number, elapsed_time_seconds, state)
-    print("number of steps: {}".format(step_number))
-    print("elapsed time: {} days".format(elapsed_time_seconds))
-    print(state)
+        elapsed_time += state.step_duration_days
+    state = schedule.complete(step_number, elapsed_time, state)
+    write_tsv_record(output_stream, step_number, elapsed_time, state, attributes)
 
+def write_tsv_header(output_stream, attributes):
+    default_columns = ['step_number', 'elapsed_time']
+    header = '\t'.join(chain(default_columns, attributes))
+    print(header, file=output_stream)
 
-def step(step_number, elapsed_time_seconds, state):
-    """Advance the simulation one time step."""
+def write_tsv_record(output_stream, step_number, elapsed_time, state, attributes):
+    """Record the model state to a stream.
 
-    # Determine the number of new persons allocated in this time-step
-    state.num_new_personnel += state.personnel_allocation_rate * state.step_duration_days
+    Args:
+        output_stream: A file-like object to which results will be streamed.
+        step_number: An integer step number.
+        elapsed_time: The elapsed model time.
+        state: The current model state.
+        attributes: An iterable series of attribute names from the state object to be recorded.
+    """
+    fields = OrderedDict()
+    fields['step_number'] = str(step_number)
+    fields['elapsed_time'] = str(elapsed_time)
 
-    # Determine the assimilation rate
-    state.personnel_assimilation_rate = state.num_new_personnel / state.assimilation_delay_days
+    for attribute in attributes:
+        field = str(getattr(state, attribute))
+        if '\t' in field:
+            raise ValueError('Field value {!r} contains a tab character. Cannot write to TSV file.'.format(field))
+        fields[attribute] = field
 
-    # Determine the number of persons assimilated from the new personnel group
-    # into the experienced personnel group
-    num_assimilated = min(state.personnel_assimilation_rate * state.step_duration_days,
-                          state.num_new_personnel)
-    state.num_new_personnel -= num_assimilated
-    state.num_experienced_personnel += num_assimilated
-
-    # Determine the number of experienced personnel needed for training
-    num_experienced_personnel_needed_for_training = state.training_overhead_proportion * state.num_new_personnel
-
-    # Determine the communication overhead
-    communication_overhead = state.communication_overhead(state.num_new_personnel + state.num_experienced_personnel)
-
-    # Determine the number of function points developed in this time-step
-    delta_function_points_developed = (
-        state.nominal_productivity
-        * (1 - communication_overhead)
-        * (  state._new_productivity_weight * state.num_new_personnel
-           + state.experienced_productivity_weight * (  state.num_experienced_personnel
-                                                      - num_experienced_personnel_needed_for_training))
-        * state.step_duration_days)
-
-    state.num_function_points_developed += delta_function_points_developed
-    return state
-
-
-
+    line = '\t'.join(fields.values())
+    print(line, file=output_stream)

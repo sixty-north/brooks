@@ -1,5 +1,5 @@
 class State:
-    """Aggegated instantaneous state of the simulation."""
+    """Aggregated instantaneous state of the simulation."""
 
     def __init__(
             self,
@@ -15,7 +15,8 @@ class State:
             new_productivity_weight,
             experienced_productivity_weight,
             training_overhead_proportion,
-            communication_overhead_function):
+            communication_overhead_function,
+            software_development_rate):
         self.step_duration_days = step_duration_days
         self.num_function_points_requirements = num_function_points_requirements
         self.num_function_points_developed = num_function_points_developed
@@ -29,6 +30,7 @@ class State:
         self.experienced_productivity_weight = experienced_productivity_weight
         self.training_overhead_proportion = training_overhead_proportion
         self._communication_overhead_function = communication_overhead_function
+        self._software_development_rate = software_development_rate
         pass
 
     @property
@@ -151,19 +153,30 @@ class State:
     def communication_overhead(self, num_personnel):
         return self._communication_overhead_function(num_personnel)
 
+    @property
+    def software_development_rate(self):
+        return self._software_development_rate
+
+    @software_development_rate.setter
+    def software_development_rate(self, value):
+        if value < 0:
+            raise ValueError("Software development rate {0} cannot be negative".format(value))
+        self._software_development_rate = value
+
     def __repr__(self):
-        return "{}("                                 \
-            "step_duration_days={}, "                \
+        return "{}("                                     \
+            "step_duration_days={}, "                    \
             "num_functions_points_requirements={:.2f}, " \
             "num_functions_points_developed={:.2f}, "    \
             "num_new_personnel={:.2f}, "                 \
             "num_experienced_personnel={:.2f}, "         \
             "personnel_allocation_rate={:.2f}, "         \
             "personnel_assimilation_rate={:.2f}, "       \
-            "assimilation_delay_days={}, "           \
-            "nominal_productivity={}, "              \
-            "new_productivity_weight={}, "           \
-            "experienced_productivity_weight={}"     \
+            "assimilation_delay_days={}, "               \
+            "nominal_productivity={}, "                  \
+            "new_productivity_weight={}, "               \
+            "experienced_productivity_weight={}, "       \
+            "software_development_rate={}"               \
             ")".format(
                 self.__class__.__name__,
                 self._step_duration_days,
@@ -176,5 +189,5 @@ class State:
                 self._assimilation_delay_days,
                 self._nominal_productivity,
                 self._new_productivity_weight,
-                self._experienced_productivity_weight
-            )
+                self._experienced_productivity_weight,
+                self._software_development_rate)

@@ -1,4 +1,4 @@
-from brooks.communication import communication_overhead_proportion
+import brooks.communication
 
 
 def initial():
@@ -15,12 +15,15 @@ def initial():
         new_productivity_weight=0.8,
         experienced_productivity_weight=1.2,
         training_overhead_proportion=0.25,
-        communication_overhead_function=communication_overhead_proportion
+        communication_overhead_function=brooks.communication.overhead_proportion,
+        software_development_rate=None,
     )
 
 
 def intervene(step_number, elapsed_time, state):
     """Intervene in the current step before the main simulation step is executed."""
+    if step_number == 110:
+        state.num_new_personnel += 10
     return state
 
 
