@@ -14,7 +14,8 @@ class State:
             nominal_productivity,
             new_productivity_weight,
             experienced_productivity_weight,
-            training_overhead_proportion):
+            training_overhead_proportion,
+            communication_overhead_function):
         self.step_duration_days = step_duration_days
         self.num_function_points_requirements = num_function_points_requirements
         self.num_function_points_developed = num_function_points_developed
@@ -27,6 +28,7 @@ class State:
         self.new_productivity_weight = new_productivity_weight
         self.experienced_productivity_weight = experienced_productivity_weight
         self.training_overhead_proportion = training_overhead_proportion
+        self._communication_overhead_function = communication_overhead_function
         pass
 
     @property
@@ -145,6 +147,9 @@ class State:
         if value < 0:
             raise ValueError("Training overhead proportion {0} cannot be negative.".format(value))
         self._training_overhead_proportion = value
+
+    def communication_overhead(self, num_personnel):
+        return self._communication_overhead_function(num_personnel)
 
     def __repr__(self):
         return "{}("                                 \

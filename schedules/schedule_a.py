@@ -4,7 +4,7 @@ def initial():
         step_duration_days=1,
         num_function_points_requirements=500,
         num_function_points_developed=0,
-        num_new_personnel=5,
+        num_new_personnel=0,
         num_experienced_personnel=20,
         personnel_allocation_rate=0,
         personnel_assimilation_rate=0,
@@ -12,7 +12,8 @@ def initial():
         nominal_productivity=0.1,
         new_productivity_weight=0.8,
         experienced_productivity_weight=1.2,
-        training_overhead_proportion=0.5
+        training_overhead_proportion=0.25,
+        communication_overhead_function=communication_overhead_proportion
     )
 
 
@@ -27,3 +28,12 @@ def is_complete(step_number, elapsed_time_seconds, state):
 
 def complete(step_number, elapsed_time_seconds, state):
     return state
+
+def communication_overhead_proportion(num_personnel):
+    """The proportion of time spent on communication overhead.
+
+    Abdel-Hamid model.
+    """
+    if not (0 <= num_personnel <= 30):
+        raise DomainError("Communication overhead proportion out of range")
+    return ((num_personnel / 4.082)**2) / 100.0

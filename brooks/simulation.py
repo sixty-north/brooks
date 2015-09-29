@@ -47,9 +47,13 @@ def step(step_number, elapsed_time_seconds, state):
     # Determine the number of experienced personnel needed for training
     num_experienced_personnel_needed_for_training = state.training_overhead_proportion * state.num_new_personnel
 
+    # Determine the communication overhead
+    communication_overhead = state.communication_overhead(state.num_new_personnel + state.num_experienced_personnel)
+
     # Determine the number of function points developed in this time-step
     delta_function_points_developed = (
         state.nominal_productivity
+        * (1 - communication_overhead)
         * (  state._new_productivity_weight * state.num_new_personnel
            + state.experienced_productivity_weight * (  state.num_experienced_personnel
                                                       - num_experienced_personnel_needed_for_training))
@@ -57,3 +61,6 @@ def step(step_number, elapsed_time_seconds, state):
 
     state.num_function_points_developed += delta_function_points_developed
     return state
+
+
+
