@@ -3,7 +3,7 @@
 Plot overlain time series for different runs of the Brooks' Law simulator.
 
 Usage:
-    plotter [--output=<output-file>] [--time=<time-attribute>] <attribute> <tsv>...
+    plotter [--output=<output-file>] [--xsize=<inches> --ysize=<inches> --dpi=<dots-per-inch>] [--xmax=<time-axis-maximum>] [--ymax=<attribute-axis-maximum] [--time=<time-attribute>] <attribute> <tsv>...
     plotter (-h | --help)
     plotter --version
 
@@ -12,10 +12,15 @@ Arguments:
     tsv             One or more TSV file paths or a single dash for stdin.
 
 Options:
-  --time=<time-attribute>  The name of the model state attribute used as the time axis. [default: elapsed_time]
-  --output=<output-file>   Output file: [default: stdout]
-  -h --help                Show this screen.
-  --version                Show version
+  --time=<time-attribute>          The name of the model state attribute used as the time axis. [default: elapsed_time]
+  --output=<output-file>           Output file: [default: interactive]
+  --xsize=<inches>                 The horizontal size of the plot in inches
+  --ysize=<inches>                 The vertical size of the plot in inches
+  --dpi=<dots-per-inch>            The number of dots per inch for plotting
+  --xmax=<time-axis-maximum>       The maximum value on the time (x) axis
+  --ymax=<attribute-axis-maximum>  The maximum value on the attribute (y) axis
+  -h --help                        Show this screen.
+  --version                        Show version
 """
 import os
 import sys
@@ -37,6 +42,7 @@ def main(argv=None):
     time_attr = arguments['--time']
     attribute = arguments['<attribute>']
     tsv_paths = arguments['<tsv>']
+    output = arguments['--output']
 
     run_frames = []
     for tsv_path in tsv_paths:
@@ -50,12 +56,37 @@ def main(argv=None):
     frame.set_index(time_attr, inplace=True, verify_integrity=True)
     frame.fillna(0, inplace=True)
 
-    frame.plot()
+    if arguments['--xsize'] is not None:
+        assert arguments['--ysize'] is not None
+        xsize_inches = float(arguments['--xsize'])
+        ysize_inches = float(arguments['--ysize'])
+        dpi = float(arguments['--dpi'])
+        plt.figure(figsize=(xsize_inches, ysize_inches), dpi=dpi)
+
+    frame.plot(ax=plt.gca())
 
     plt.ylim(ymin=0)
-    xlim_min, xlim_max = plt.xlim()
-    plt.xlim(xmax=(xlim_max - xlim_min) * 1.05)
-    plt.show()
+    if arguments['--xmax'] is None:
+        xlim_min, xlim_max = plt.xlim()
+        plt.xlim(xmax=(xlim_max - xlim_min) * 1.05)
+    else:
+        xmax = float(arguments['--xmax'])
+        plt.xlim(xmax=xmax)
+
+    if arguments['--ymax'] is not None:
+        ymax = float(arguments['--ymax'])
+        plt.ylim(ymax=ymax)
+
+    plt.ylabel(attribute)
+
+    if output == 'interactive':
+        plt.show()
+    else:
+        savefig_args = {}
+        if arguments['--dpi'] is not None:
+            savefig_args['dpi'] = dpi
+
+        plt.gcf().savefig(output, **savefig_args)
 
     return 0
 
