@@ -27,9 +27,9 @@ from brooks.brooks_law import step
 
 def main(argv=None):
     if argv is None:
-        argv = sys.argv
+        argv = sys.argv[1:]
 
-    arguments = docopt(__doc__, version="Brooks 0.5")
+    arguments = docopt(__doc__, argv=argv, version="Brooks 0.5")
 
     schedule_file_path = arguments['<schedule>']
     loader = importlib.machinery.SourceFileLoader("schedule", schedule_file_path)
@@ -37,17 +37,17 @@ def main(argv=None):
 
     attributes = arguments['<attribute>']
 
-    with open_stream(arguments['--output']) as output_stream:
+    with open_out_stream(arguments['--output']) as output_stream:
         simulate(schedule, step, output_stream, attributes)
 
     return 0
 
 @contextmanager
-def open_stream(filepath):
+def open_out_stream(filepath):
     if filepath == 'stdout':
         yield sys.stdout
     else:
-        f = open(filepath)
+        f = open(filepath, 'wt')
         yield f
         f.close()
 
