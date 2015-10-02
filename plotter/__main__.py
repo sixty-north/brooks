@@ -3,21 +3,24 @@
 Plot overlain time series for different runs of the Brooks' Law simulator.
 
 Usage:
-    plotter [--output=<output-file>] <attribute> <tsv>...
+    plotter [--output=<output-file>] [--time=<time-attribute>] <attribute> <tsv>...
+    plotter (-h | --help)
+    plotter --version
 
 Arguments:
-    tsv         One or more TSV file paths or a single dash for stdin.
-    attribute   The name(s) of one or more a model state attribute(s) to be charted at each step.
+    attribute       The name of a model state attribute to be charted at each step.
+    tsv             One or more TSV file paths or a single dash for stdin.
 
 Options:
-  --output=<output-file>  Output file: [default: stdout]
-  -h --help               Show this screen.
-  --version               Show version
+  --time=<time-attribute>  The name of the model state attribute used as the time axis. [default: elapsed_time]
+  --output=<output-file>   Output file: [default: stdout]
+  -h --help                Show this screen.
+  --version                Show version
 """
-
+import os
 import sys
-from contextlib import contextmanager
-from collections import OrderedDict
+
+from functools import reduce
 
 from docopt import docopt
 
@@ -27,83 +30,35 @@ import matplotlib.pyplot as plt
 
 def main(argv=None):
     if argv is None:
-        argv = sys.argv
+        argv = sys.argv[1:]
 
-    arguments = docopt(__doc__, version="Plotter 0.5")
+    arguments = docopt(__doc__, argv=argv, version="Plotter 0.5")
 
+    time_attr = arguments['--time']
+    attribute = arguments['<attribute>']
     tsv_paths = arguments['<tsv>']
-    attributes = arguments['<attribute>']
 
-    # for tsv_path in tsv_paths:
-    #     run_frame = pandas.read_table(tsv_path)
-    #     print(run_frame)
+    run_frames = []
+    for tsv_path in tsv_paths:
+        run_name, _ = os.path.splitext(os.path.basename(tsv_path))
+        loaded_frame = pandas.read_table(tsv_path, na_values=['None'])
+        run_frame = loaded_frame[[time_attr, attribute]].copy()
+        run_frame.rename(columns={attribute: run_name}, inplace=True)
+        run_frames.append(run_frame)
 
-    run_frame = pandas.read_table(tsv_paths[0], na_values=['None'])
-    run_frame = run_frame.fillna(0)
-    print(run_frame)
+    frame = reduce(lambda a, b: pandas.merge(a, b, on=time_attr, how='outer'), run_frames)
+    frame.set_index(time_attr, inplace=True, verify_integrity=True)
+    frame.fillna(0, inplace=True)
 
-    single_frame = pandas.DataFrame()
+    frame.plot()
 
-    run_frame.plot()
-
-
-    # ax = seaborn.tsplot(
-    #     data=run_frame,
-    #     time='elapsed_time',
-    #     unit='step_number',
-    #     value='software_development_rate',
-    #     err_style='unit_traces')
-
-    # columns = read_tsvs(tsv_paths)
-    #
-    # ax = seaborn.tsplot(time=columns['elapsed_time'],
-    #                     data=columns['software_development_rate'])
-    #
-    #
-
-    #seaborn.plt.show()
+    plt.ylim(ymin=0)
+    xlim_min, xlim_max = plt.xlim()
+    plt.xlim(xmax=(xlim_max - xlim_min) * 1.05)
     plt.show()
 
     return 0
 
-
-def read_tsvs(tsv_paths):
-    for tsv_path in tsv_paths:
-        with open_in_stream(tsv_path) as tsv_file:
-            line_reader = iter(tsv_file)
-            try:
-                header = next(line_reader).rstrip()
-            except StopIteration:
-                raise RuntimeError("File {!r} too short".format(tsv_path))
-            headings = header.split('\t')
-            columns = OrderedDict((heading, []) for heading in headings)
-            for line in map(str.rstrip, line_reader):
-                text_fields = line.split('\t')
-                fields = [convert_field(text_field) for text_field in text_fields]
-                for heading, field in zip(headings, fields):
-                    columns[heading].append(field)
-    return columns
-
-
-def convert_field(text):
-    try:
-        return int(text)
-    except ValueError:
-        try:
-            return float(text)
-        except ValueError:
-            if text == 'None':
-                return 0.0
-            return text
-
-@contextmanager
-def open_in_stream(filepath):
-    if filepath == '-':
-        yield sys.stdin
-    else:
-        f = open(filepath, 'rt')
-        yield f
-        f.close()
 
 if __name__ == '__main__':
     sys.exit(main())
