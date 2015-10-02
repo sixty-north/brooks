@@ -31,7 +31,6 @@ def simulate(schedule, step, output_stream=None, attributes=tuple()):
     elapsed_time = 0
     write_tsv_header(output_stream, attributes)
     while not schedule.is_complete(step_number, elapsed_time, state):
-        #print(state)
         write_tsv_record(output_stream, step_number, elapsed_time, state, attributes)
         state = schedule.intervene(step_number, elapsed_time, state)
         state = step(step_number, elapsed_time, state)
