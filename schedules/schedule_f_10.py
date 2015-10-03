@@ -1,9 +1,10 @@
 import brooks.communication
 
+from brooks.state import State
 
 def initial():
     """Configure the initial model state."""
-    return dict(
+    return State(
         step_duration_days=1,
         num_function_points_requirements=500,
         num_function_points_developed=0,
@@ -18,13 +19,14 @@ def initial():
         training_overhead_proportion=0.25,
         communication_overhead_function=brooks.communication.quadratic_overhead_proportion,
         software_development_rate=None,
+        cumulative_person_days=0,
     )
 
 
 def intervene(step_number, elapsed_time, state):
     """Intervene in the current step before the main simulation step is executed."""
     if elapsed_time == 110:
-        state.num_new_personnel += 5
+        state.num_new_personnel += 10
     return state
 
 

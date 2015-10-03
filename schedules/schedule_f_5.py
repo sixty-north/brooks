@@ -1,9 +1,10 @@
 import brooks.communication
 
+from brooks.state import State
 
 def initial():
     """Configure the initial model state."""
-    return dict(
+    return State(
         step_duration_days=1,
         num_function_points_requirements=500,
         num_function_points_developed=0,
@@ -18,6 +19,7 @@ def initial():
         training_overhead_proportion=0.25,
         communication_overhead_function=brooks.communication.quadratic_overhead_proportion,
         software_development_rate=None,
+        cumulative_person_days=0,
     )
 
 

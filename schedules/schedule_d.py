@@ -1,8 +1,9 @@
 import brooks.communication
 
+from brooks.state import State
 
 def initial():
-    return dict(
+    return State(
         step_duration_days=1,
         num_function_points_requirements=500,
         num_function_points_developed=0,
@@ -14,9 +15,10 @@ def initial():
         nominal_productivity=0.1,
         new_productivity_weight=0.8,
         experienced_productivity_weight=1.2,
-        training_overhead_proportion=0.0,
+        training_overhead_proportion=0.25,
         communication_overhead_function=brooks.communication.no_overhead,
         software_development_rate=None,
+        cumulative_person_days=0,
     )
 
 
