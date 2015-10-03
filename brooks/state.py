@@ -31,7 +31,7 @@ class State:
         self.experienced_productivity_weight = experienced_productivity_weight
         self.training_overhead_proportion = training_overhead_proportion
         self._communication_overhead_function = communication_overhead_function
-        self._software_development_rate = software_development_rate,
+        self._software_development_rate = software_development_rate
         self._cumulative_person_days = cumulative_person_days
         pass
 
