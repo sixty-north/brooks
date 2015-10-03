@@ -25,8 +25,7 @@ def simulate(schedule, step, output_stream=None, attributes=tuple()):
         attributes: An iterable series of attribute names to be recorded in the output stream.
 
     """
-    args = schedule.initial()
-    state = State(**args)
+    state = schedule.initial()
     step_number = 0
     elapsed_time = 0
     write_tsv_header(output_stream, attributes)

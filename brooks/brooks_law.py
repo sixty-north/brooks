@@ -41,4 +41,6 @@ def step(step_number, elapsed_time, state):
         * state.step_duration_days)
 
     state.num_function_points_developed += state.software_development_rate
+    state.cumulative_person_days += state.step_duration_days * (  state.num_new_personnel
+                                                                + state.num_experienced_personnel)
     return state

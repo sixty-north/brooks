@@ -2,6 +2,9 @@
 
 from math import exp
 
+def no_overhead(num_personnel):
+    return 0
+
 def quadratic_overhead_proportion(num_personnel):
     """The proportion of time spent on communication overhead.
 
@@ -32,6 +35,6 @@ def partitioned_overhead_proportion(num_personnel, max_team_size):
 def gompertz_overhead_proportion(num_personnel):
     """A Gompertz function which saturates at high numbers of personnel."""
     a = 1.0       # These values are adjusted to closely
-    b = 5.0       # match the Abdel-Hamid curve in the
-    c = 1 / 14.2  # range 0 to 30
+    b = 6.5       # match the Abdel-Hamid curve in the
+    c = 1 / 13    # range 0 to 30
     return (a * exp(-b * exp(-c * num_personnel))) - (a * exp(-b))
