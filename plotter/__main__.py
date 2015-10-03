@@ -3,7 +3,7 @@
 Plot overlain time series for different runs of the Brooks' Law simulator.
 
 Usage:
-    plotter [--output=<output-file>] [--xsize=<inches> --ysize=<inches> --dpi=<dots-per-inch>] [--xmax=<time-axis-maximum>] [--ymax=<attribute-axis-maximum] [--time=<time-attribute>] <attribute> <tsv>...
+    plotter [--output=<output-file>] [--xsize=<inches> --ysize=<inches> --dpi=<dots-per-inch>] [--xmax=<time-axis-maximum>] [--ymax=<attribute-axis-maximum] [--start-color=<index>] [--time=<time-attribute>] <attribute> <tsv>...
     plotter (-h | --help)
     plotter --version
 
@@ -19,6 +19,7 @@ Options:
   --dpi=<dots-per-inch>            The number of dots per inch for plotting
   --xmax=<time-axis-maximum>       The maximum value on the time (x) axis
   --ymax=<attribute-axis-maximum>  The maximum value on the attribute (y) axis
+  --start-color=<index>            The one-based index of the initial color cycle index. [default: 1]
   -h --help                        Show this screen.
   --version                        Show version
 """
@@ -30,7 +31,7 @@ from functools import reduce
 from docopt import docopt
 
 import pandas
-import seaborn
+import seaborn  # Although apparently unused, this import has side-effects.
 import matplotlib.pyplot as plt
 
 def main(argv=None):
@@ -62,6 +63,11 @@ def main(argv=None):
         ysize_inches = float(arguments['--ysize'])
         dpi = float(arguments['--dpi'])
         plt.figure(figsize=(xsize_inches, ysize_inches), dpi=dpi)
+
+    start_color_index = int(arguments['--start-color']) - 1
+    color_cycle = plt.gca()._get_lines.color_cycle
+    for i in range(start_color_index):
+        next(color_cycle)
 
     frame.plot(ax=plt.gca())
 

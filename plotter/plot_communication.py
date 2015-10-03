@@ -1,4 +1,10 @@
-import seaborn
+"""This program constructs a one-off chart for use in the accompanying presentation.
+
+Execute it from the parent directory to produce a chart at plots/communication.pdf"
+
+"""
+
+import seaborn  # Although apparently unused, this import has side-effects.
 
 import matplotlib.pyplot as plt
 
