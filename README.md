@@ -8,7 +8,7 @@ As of now, there is no installer.
 
 ## Usage
 
-Clone and modify one of the existing Python modules in the `schedules` directory to descrive the simulation you want
+Clone and modify one of the existing Python modules in the `schedules` directory to describe the simulation you want
 to run, the run the simulation with:
 
     $ cd brooks
