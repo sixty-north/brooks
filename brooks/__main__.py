@@ -21,8 +21,8 @@ from contextlib import contextmanager
 
 from docopt import docopt
 
-from brooks.simulation import simulate
 from brooks.brooks_law import step
+from brooks.simulation import simulate
 
 
 def main(argv=None):
