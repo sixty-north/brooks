@@ -1,6 +1,30 @@
+from collections import OrderedDict
 import brooks.communication
 
 from brooks.state import State
+
+intervention_time = 0
+intervention_size = 0
+
+
+def configurations():
+    """A series of configuration used to explore the configuration space of this scenario.
+
+    Yields:
+        Dictionaries containing keyword arguments to be passed to the configure() function.
+    """
+    for time in range(0, 300):
+        for size in range(0, 30):
+            yield OrderedDict((('time', time),
+                               ('size', size)))
+
+
+def configure(time, size):
+    """Configure this schedule in preparation for initialisation of a run."""
+    global intervention_time
+    global intervention_size
+    intervention_time = time
+    intervention_size = size
 
 
 def initial():
@@ -9,7 +33,7 @@ def initial():
         step_duration_days=1,
         num_function_points_requirements=500,
         num_function_points_developed=0,
-        num_new_personnel=20,
+        num_new_personnel=7,
         num_experienced_personnel=0,
         personnel_allocation_rate=0,
         personnel_assimilation_rate=0,
@@ -26,8 +50,8 @@ def initial():
 
 def intervene(step_number, elapsed_time, state):
     """Intervene in the current step before the main simulation step is executed."""
-    if elapsed_time == 110:
-        state.num_new_personnel += 0
+    if elapsed_time == intervention_time:
+        state.num_new_personnel += intervention_size
     return state
 
 
