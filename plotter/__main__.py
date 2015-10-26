@@ -28,7 +28,7 @@ import sys
 
 from docopt import docopt
 
-from .plot_timeseries import plot_timeseries
+from plotter.plot_timeseries import plot_timeseries
 
 
 def as_type(val, ctor):
