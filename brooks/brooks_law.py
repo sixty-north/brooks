@@ -26,7 +26,8 @@ def step(step_number, elapsed_time, state):
     state.num_experienced_personnel += num_assimilated
 
     # Determine the number of experienced personnel needed for training
-    num_experienced_personnel_needed_for_training = state.training_overhead_proportion * state.num_new_personnel
+    num_experienced_personnel_needed_for_training = min(state.training_overhead_proportion * state.num_new_personnel,
+                                                        state.num_experienced_personnel)
 
     # Determine the communication overhead
     communication_overhead = state.communication_overhead(state.num_new_personnel + state.num_experienced_personnel)
