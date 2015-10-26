@@ -188,8 +188,9 @@ class State:
             "nominal_productivity={}, "                  \
             "new_productivity_weight={}, "               \
             "experienced_productivity_weight={}, "       \
-            "software_development_rate={}"               \
-            "cumulative_person_days={}"                  \
+            "software_development_rate={},"              \
+            "cumulative_person_days={},"                 \
+            "training_overhead_proportion={},"           \
             ")".format(
                 self.__class__.__name__,
                 self._step_duration_days,
@@ -204,4 +205,5 @@ class State:
                 self._new_productivity_weight,
                 self._experienced_productivity_weight,
                 self._software_development_rate,
-                self._cumulative_person_days)
+                self._cumulative_person_days,
+                self._training_overhead_proportion)
